@@ -1,0 +1,50 @@
+name: CI - Build, Test, Coverage & SonarCloud
+on:
+  push:
+    branches: [ develop, 'feature/**' ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build-test-sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore solution
+        run: dotnet restore PTA.sln
+
+      - name: Build
+        run: dotnet build PTA.sln -c Release --no-restore
+
+      - name: Test with coverage
+        run: |
+          dotnet test tests/PTA.Tests/PTA.Tests.csproj --no-build -c Release --logger trx --results-directory tests/PTA.Tests/TestResults --collect:"XPlat Code Coverage"
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: tests/PTA.Tests/TestResults
+
+      - name: SonarCloud Scan (begin)
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.host.url=https://sonarcloud.io
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarCloud Quality Gate
+        uses: SonarSource/sonarcloud-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

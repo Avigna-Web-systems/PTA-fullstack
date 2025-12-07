@@ -1,0 +1,13 @@
+name: Deploy to QA (Render)
+on:
+  push:
+    branches: [ 'release/**' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-push
+    steps:
+      - name: Deploy Backend to QA
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_QA_BACKEND }}/deploys"             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"             -H "Content-Type: application/json"             -d "{"clearCache": true, "dockerImage": "${{ env.IMAGE_BACKEND }}:${{ github.sha }}"}"
