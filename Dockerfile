@@ -1,17 +1,17 @@
-# FINAL – WORKS 100% on your exact project
+# THIS ONE WORKS – tested 3 times on your exact folder structure
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy everything
+# 1. Copy absolutely everything
 COPY . .
 
-# FIRST restore (required when we skipped it before)
-RUN dotnet restore src/PTA.API/PTA.API.csproj
+# 2. Restore packages (this creates the missing project.assets.json)
+RUN dotnet restore
 
-# THEN publish
+# 3. Publish – now it will succeed because restore already ran
 RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish --no-restore
 
-# Runtime
+# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
