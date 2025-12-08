@@ -1,4 +1,3 @@
-```dockerfile
 # 100% WORKING – tested on your exact folder structure
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
