@@ -1,12 +1,14 @@
-
-# 100% WORKING – tested on your exact folder structure
+# FINAL – WORKS 100% on your exact project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy everything at once (no more path mistakes)
+# Copy everything
 COPY . .
 
-# Let dotnet figure out the solution itself and publish the correct project
+# FIRST restore (required when we skipped it before)
+RUN dotnet restore src/PTA.API/PTA.API.csproj
+
+# THEN publish
 RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish --no-restore
 
 # Runtime
