@@ -7,7 +7,7 @@ jobs:
   build-push:
     runs-on: ubuntu-latest
     env:
-      IMAGE_BACKEND: ghcr.io/${{ secrets.GHCR_ORG }}/pta-backend
+      IMAGE_BACKEND: ghcr.io/${{ secrets.GHCR_ORG }}/pta-backend  #organization name
       IMAGE_FRONTEND: ghcr.io/${{ secrets.GHCR_ORG }}/pta-frontend
 
     steps:
