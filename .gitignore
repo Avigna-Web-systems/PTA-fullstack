@@ -1,10 +1,31 @@
-bin/
-obj/
-.vscode/
+# Visual Studio
+.vs/
 *.user
 *.suo
+
+# Build
+bin/
+obj/
+
+# Logs
 *.log
+
+# Test results
 TestResults/
+TestResult.xml
+
+# Playwright
+playwright-report/
+playwright/.cache/
+.playwright/
+
+# Node (if using mcp or other js parts)
 node_modules/
 dist/
+
+# Environment files
 .env
+.env.*
+
+# VS Code
+.vscode/
