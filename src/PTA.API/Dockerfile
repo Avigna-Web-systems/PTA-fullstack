@@ -6,7 +6,7 @@ COPY ["src/PTA.Infrastructure/PTA.Infrastructure.csproj", "src/PTA.Infrastructur
 COPY ["src/PTA.API/PTA.API.csproj", "src/PTA.API/"]
 RUN dotnet restore "PTA.sln"
 COPY . .
-WORKDIR /src/src/PTA.API
+WORKDIR /src/PTA.API
 RUN dotnet publish "PTA.API.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
