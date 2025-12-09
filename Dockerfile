@@ -1,20 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj files – using real no-dot folder names
-COPY src/PTAAPI/*.csproj ./PTAAPI/
-COPY src/PTACore/*.csproj ./PTACore/
-COPY src/PTAInfrastructure/*.csproj ./PTAInfrastructure/
+# Copy the entire src folder at once (bypasses individual folder checksum errors)
+COPY src/ ./src/
 
-RUN dotnet restore ./PTAAPI/PTAAPI.csproj
+# Restore the solution (uses PTA.sln for all projects)
+RUN dotnet restore PTA.sln
 
-# Copy source code – real no-dot folders
-COPY src/PTAAPI/ ./PTAAPI/
-COPY src/PTACore/ ./PTACore/
-COPY src/PTAInfrastructure/ ./PTAInfrastructure/
-
-# Publish
-RUN dotnet publish ./PTAAPI/PTAAPI.csproj -c Release -o /app/publish --no-restore
+# Publish the API project
+RUN dotnet publish src/PTAAPI/PTAAPI.csproj -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
