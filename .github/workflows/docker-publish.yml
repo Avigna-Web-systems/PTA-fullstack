@@ -23,21 +23,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      # BACKEND – the only line that matters is the ./ before src
+      # BACKEND: Context = folder with Dockerfile, file = default "Dockerfile"
       - uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./src/PTA.API/Dockerfile        # ← MUST start with ./
+          context: ./src/PTA.API  # ← Subdir as context (bug-proof)
+          file: Dockerfile        # ← Default name, no path needed
           push: true
           tags: |
             ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
             ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:${{ github.sha }}
 
-      # FRONTEND – same thing
+      # FRONTEND: Same pattern
       - uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./src/PTA.UI/Dockerfile         # ← MUST start with ./
+          context: ./src/PTA.UI  # ← Subdir as context
+          file: Dockerfile       # ← Default name
           push: true
           tags: |
             ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:latest
