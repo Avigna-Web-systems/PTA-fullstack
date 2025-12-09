@@ -23,16 +23,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # BACKEND – the only line that matters is the ./ before src
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: src/PTA.API/Dockerfile
+          file: ./src/PTA.API/Dockerfile        # ← MUST start with ./
           push: true
-          tags: ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:${{ github.sha }}
 
+      # FRONTEND – same thing
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: src/PTA.UI/Dockerfile
+          file: ./src/PTA.UI/Dockerfile         # ← MUST start with ./
           push: true
-          tags: ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:latest
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:latest
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:${{ github.sha }}
