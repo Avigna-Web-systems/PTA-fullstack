@@ -28,12 +28,11 @@ jobs:
         with:
           context: .
           file: src/PTA.API/Dockerfile
+          # correct path
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/pta-backend:latest
-            ghcr.io/${{ github.repository_owner }}/pta-backend:${{ github.sha }}
-          # This automatically lowercases the owner name
-          provenance: false
+            ghcr.io/${{ toLower(github.repository_owner) }}/pta-backend:latest
+            ghcr.io/${{ toLower(github.repository_owner) }}/pta-backend:${{ github.sha }}
 
       - name: Build & push Frontend
         uses: docker/build-push-action@v6
@@ -42,6 +41,5 @@ jobs:
           file: src/PTA.UI/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/pta-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/pta-frontend:${{ github.sha }}
-          provenance: false
+            ghcr.io/${{ toLower(github.repository_owner) }}/pta-frontend:latest
+            ghcr.io/${{ toLower(github.repository_owner) }}/pta-frontend:${{ github.sha }}
