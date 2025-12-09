@@ -2,7 +2,7 @@ version: '3.8'
 services:
   backend:
     build:
-      context: .
+      context: . .
       dockerfile: src/PTA.API/Dockerfile
     ports:
       - '5000:80'
