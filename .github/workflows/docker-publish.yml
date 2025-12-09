@@ -1,3 +1,4 @@
+# .github/workflows/docker.yml
 name: Build and Push Docker Images
 
 on:
@@ -31,6 +32,8 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/pta-backend:latest
             ghcr.io/${{ github.repository_owner }}/pta-backend:${{ github.sha }}
+          # This automatically lowercases the owner name
+          provenance: false
 
       - name: Build & push Frontend
         uses: docker/build-push-action@v6
@@ -41,3 +44,4 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/pta-frontend:latest
             ghcr.io/${{ github.repository_owner }}/pta-frontend:${{ github.sha }}
+          provenance: false
