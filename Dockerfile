@@ -1,15 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy all csproj files
+# Correct paths – note the dot in PTA.API
 COPY src/PTA.API/*.csproj ./PTA.API/
 COPY src/PTA.Core/*.csproj ./PTA.Core/
 COPY src/PTA.Infrastructure/*.csproj ./PTA.Infrastructure/
 
 RUN dotnet restore ./PTA.API/PTA.API.csproj
 
-# Copy source code
-COPY src/src/PTA.API/ ./PTA.API/
+# Copy source code – correct paths
+COPY src/PTA.API/ ./PTA.API/
 COPY src/PTA.Core/ ./PTA.Core/
 COPY src/PTA.Infrastructure/ ./PTA.Infrastructure/
 
