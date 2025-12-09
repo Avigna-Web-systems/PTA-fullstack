@@ -29,8 +29,8 @@ jobs:
           file: src/PTA.API/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/pta-backend:latest
-            ghcr.io/${{ github.repository }}/pta-backend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/pta-backend:latest
+            ghcr.io/${{ github.repository_owner }}/pta-backend:${{ github.sha }}
 
       - name: Build & push Frontend
         uses: docker/build-push-action@v6
@@ -39,5 +39,5 @@ jobs:
           file: src/PTA.UI/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/pta-frontend:latest
-            ghcr.io/${{ github.repository }}/pta-frontend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/pta-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/pta-frontend:${{ github.sha }}
