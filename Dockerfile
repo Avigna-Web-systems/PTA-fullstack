@@ -1,20 +1,19 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
-COPY src/PTA.API/PTA.API.csproj ./PTA.API/
-COPY src/PTA.Core/PTA.Core.csproj ./PTA.Core/
-COPY src/PTA.Infrastructure/PTA.Infrastructure.csproj ./PTA.Infrastructure/
+COPY *.csproj ./
+COPY ../PTA.Core/*.csproj ../PTA.Core/
+COPY ../PTA.Infrastructure/*.csproj ../PTA.Infrastructure/
 
-RUN dotnet restore ./PTA.API/PTA.API.csproj
+RUN dotnet restore
 
-COPY src/ .
+COPY . .
 
-# THIS IS THE ONLY LINE YOU CHANGED
-RUN dotnet publish PTA.API.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish -c Release -o /publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /publish .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "PTA.API.dll"]
