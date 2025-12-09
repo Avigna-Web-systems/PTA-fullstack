@@ -8,7 +8,7 @@ services:
       - '5000:80'
   frontend:
     build:
-      context: .
+      context: . .
       dockerfile: src/PTA.UI/Dockerfile
     ports:
       - '3000:80'
