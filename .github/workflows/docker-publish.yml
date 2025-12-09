@@ -8,16 +8,16 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Convert owner name to lowercase (Avigna-Web-systems → avigna-web-systems)
-      - name: Lowercase owner
-        id: vars
-        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
+      - name: Lowercase owner name
+        id: owner
+        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_OUTPUT
 
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Login to GHCR
@@ -27,24 +27,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # BACKEND
-      - name: Build & push Backend
+      # ────────────────────── BACKEND ──────────────────────
+      - name: Build and push Backend
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./src/PTA.API/Dockerfile          # ← THIS WAS THE MISSING "./"
+          file: src/PTA.API/Dockerfile          # THIS IS CORRECT
           push: true
+          build-args: |
+            BUILD_CONFIGURATION=Release
           tags: |
-            ghcr.io/${{ steps.vars.outputs.owner }}/pta-backend:latest
-            ghcr.io/${{ steps.vars.outputs.owner }}/pta-backend:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:${{ github.sha }}
 
-      # FRONTEND
-      - name: Build & push Frontend
+      # ────────────────────── FRONTEND ──────────────────────
+      - name: Build and push Frontend
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./src/PTA.UI/Dockerfile           # ← THIS WAS ALSO MISSING "./"
+          file: src/PTA.UI/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ steps.vars.outputs.owner }}/pta-frontend:latest
-            ghcr.io/${{ steps.vars.outputs.owner }}/pta-frontend:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:latest
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:${{ github.sha }}
