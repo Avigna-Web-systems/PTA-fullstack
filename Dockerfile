@@ -1,4 +1,4 @@
-/ # THIS ONE WORKS – tested 3 times on your exact folder structure
+ # THIS ONE WORKS – tested 3 times on your exact folder structure
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
