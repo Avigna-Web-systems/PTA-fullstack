@@ -16,11 +16,7 @@ RUN dotnet restore PTA.sln
 COPY src/ ./src/
 
 # 5. Build + publish the API (this line is now guaranteed to work)
-RUN dotnet publish src/PTA.API/PTA.API.csproj \
-    -c Release \
-    -o /app/publish \
-    --no-restore \
-    --configuration Release
+RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish --no-restore -v diag
 
 # Final image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
