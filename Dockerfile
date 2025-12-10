@@ -3,6 +3,7 @@ WORKDIR /src
 
 # Copy the entire src folder at once (bypasses individual folder checksum errors)
 COPY src/ ./src/
+WORKDIR /src
 
 # Restore the solution (uses PTA.sln for all projects)
 RUN dotnet restore PTA.sln
