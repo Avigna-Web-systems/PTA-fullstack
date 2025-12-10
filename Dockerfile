@@ -1,19 +1,24 @@
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy the entire src folder at once (bypasses individual folder checksum errors)
-COPY src/ ./src/
-WORKDIR /src
+# Copy solution file and all csproj files first (best caching)
+COPY src/PTA.sln .                     # ← .sln is inside src folder in your repo
+COPY src/**/*.csproj ./src/            # restore all projects in correct folders
 
-# Restore the solution (uses PTA.sln for all projects)
+# Restore (now PTA.sln exists at /src/PTA.sln)
 RUN dotnet restore PTA.sln
 
-# Publish the API project
-RUN dotnet publish src/PTAAPI/PTAAPI.csproj -c Release -o /app/publish --no-restore
+# Copy the rest of the source code
+COPY src/ ./src/
 
+# Publish the API project (change if your project name differs)
+RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish --no-restore
+
+# Final runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
 EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "PTAAPI.dll"]
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "PTA.API.dll"]
