@@ -1,24 +1,26 @@
-# Build stage
+# syntax = docker/dockerfile:1
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution file and all csproj files first (best caching)
-COPY src/PTA.sln .                     # ← .sln is inside src folder in your repo
-COPY src/**/*.csproj ./src/            # restore all projects in correct folders
+# 1. Copy the solution file from repository root
+COPY PTA.sln .
 
-# Restore (now PTA.sln exists at /src/PTA.sln)
-RUN dotnet restore PTA.sln
+# 2. Copy every single .csproj preserving folder structure (this is the correct glob)
+COPY src/**/*.csproj ./src/
 
-# Copy the rest of the source code
+# 3. Restore as fast as possible (great caching)
+RUN dotnet restore
+
+# 4. Copy the rest of the source code
 COPY src/ ./src/
 
-# Publish the API project (change if your project name differs)
+# 5. Publish the backend API (change folder/name only if different)
 RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish --no-restore
 
-# Final runtime image
+# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 EXPOSE 8080
-
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "PTA.API.dll"]
