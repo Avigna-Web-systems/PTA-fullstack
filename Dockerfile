@@ -16,8 +16,14 @@ RUN dotnet restore PTA.sln
 COPY src/ ./src/
 
 # 5. Build + publish the API (this line is now guaranteed to work)
-RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish --no-restore -v diag
-
+# Force-show the REAL compile errors – this cannot be hidden
+RUN echo "=== STARTING DOTNET PUBLISH WITH FULL ERRORS ===" && \
+    dotnet publish src/PTA.API/PTA.API.csproj \
+        -c Release \
+        -o /app/publish \
+        --no-restore \
+        -v normal \
+        || (echo "=== PUBLISH FAILED – FULL LOG ABOVE ===" && cat /src/src/PTA.API/obj/Release/net8.0/PTA.API.csproj.FileListAbsolute.txt 2>/dev/null || true && exit 1)
 # Final image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
