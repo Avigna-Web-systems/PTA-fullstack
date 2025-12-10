@@ -26,8 +26,8 @@ jobs:
       # BACKEND: Context = folder with Dockerfile, file = default "Dockerfile"
       - uses: docker/build-push-action@v6
         with:
-          context: ./src/PTA.API  # ← Subdir as context (bug-proof)
-          file: Dockerfile        # ← Default name, no path needed
+          context: .                # ← Subdir as context (bug-proof)
+          file: ./Dockerfile        # ← Default name, no path needed
           push: true
           tags: |
             ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
