@@ -1,5 +1,5 @@
+# .github/workflows/docker.yml
 name: Build and Push Docker Images
-
 on:
   push:
     branches: [ main, master ]
@@ -23,21 +23,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      # BACKEND: Context = folder with Dockerfile, file = default "Dockerfile"
-      - uses: docker/build-push-action@v6
+      # Backend
+      - name: Build & push backend
+        uses: docker/build-push-action@v6
         with:
-          context: .                # ← Subdir as context (bug-proof)
-          file: ./Dockerfile        # ← Default name, no path needed
+          context: .
+          file: ./Dockerfile
           push: true
           tags: |
             ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
             ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:${{ github.sha }}
 
-      # FRONTEND: Same pattern
-      - uses: docker/build-push-action@v6
+      # Frontend
+      - name: Build & push frontend
+        uses: docker/build-push-action@v6
         with:
-          context: ./src/PTA.UI  # ← Subdir as context
-          file: Dockerfile       # ← Default name
+          context: ./src/PTA.UI
+          file: ./src/PTA.UI/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:latest
