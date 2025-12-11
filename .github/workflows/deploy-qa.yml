@@ -1,4 +1,5 @@
 name: Deploy to QA (Render)
+
 on:
   push:
     branches: [ 'release/**' ]
@@ -9,5 +10,15 @@ jobs:
     needs: build-push
     steps:
       - name: Deploy Backend to QA
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID_QA_BACKEND }}
+          IMAGE: ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
         run: |
-          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_QA_BACKEND }}/deploys"             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"             -H "Content-Type: application/json"             -d "{"clearCache": true, "dockerImage": "${{ env.IMAGE_BACKEND }}:${{ github.sha }}"}"
+          curl -X POST "https://api.render.com/v1/services/$SERVICE_ID/deploys" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "clearCache": true,
+              "dockerImage": "'"$IMAGE"'"
+            }'
