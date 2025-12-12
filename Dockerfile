@@ -8,7 +8,11 @@ COPY . .
 RUN dotnet restore PTA.sln
 
 # Publish the API project
-RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish
+RUN echo "=== Restoring ===" && \
+    dotnet restore PTA.sln && \
+    echo "=== Publishing ===" && \
+    dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish -v detailed
+
 
 ### RUNTIME STAGE ###
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
