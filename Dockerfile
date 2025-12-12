@@ -1,17 +1,27 @@
+### BUILD STAGE ###
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+
 COPY . .
 
-# THIS WILL PRINT EVERY SINGLE ERROR LINE — GITHUB CANNOT HIDE IT
-RUN echo "===== LISTING ALL PROJECT FILES =====" && \
-    find src -name "*.csproj" | head -20 && \
-    echo "===== CONTENT OF PTA.API.csproj =====" && \
-    cat src/PTA.API/PTA.API.csproj && \
-    echo "===== DOTNET --info =====" && \
-    dotnet --info && \
-    echo "===== TRYING TO RESTORE =====" && \
-    dotnet restore PTA.sln && \
-    echo "===== TRYING TO BUILD (ALL OUTPUT VISIBLE) =====" && \
-    dotnet build src/PTA.API/PTA.API.csproj -c Release -v detailed
+# Restore solution
+RUN dotnet restore PTA.sln
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Publish the API project
+RUN dotnet publish src/PTA.API/PTA.API.csproj -c Release -o /app/publish
+
+### RUNTIME STAGE ###
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+# Expose the Render port
+EXPOSE 5000
+
+# Set ASP.NET Core to bind to Render port
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+
+# Copy output from build stage
+COPY --from=build /app/publish .
+
+# Start API
+ENTRYPOINT ["dotnet", "PTA.API.dll"]
