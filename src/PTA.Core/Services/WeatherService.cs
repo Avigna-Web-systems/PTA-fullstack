@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;   // 🔴 THIS WAS MISSING
+using System.Linq;
 
 namespace PTA.Core.Services;
 
@@ -24,12 +24,14 @@ public class WeatherService : IWeatherService
         "Warm","Balmy","Hot","Sweltering","Scorching"
     };
 
-    public IEnumerable<WeatherForecast> GetForecast() =>
-        Enumerable.Range(1, 5).Select(i => new WeatherForecast
+    public IEnumerable<WeatherForecast> GetForecast()
+    {
+        return Enumerable.Range(1, 5).Select(i => new WeatherForecast
         {
             Date = DateTime.Now.AddDays(i),
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         });
+    }
 }
 
