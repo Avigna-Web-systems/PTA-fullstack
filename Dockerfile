@@ -9,13 +9,14 @@ RUN dotnet restore src/PTA.API/PTA.API.csproj
 
 COPY src/ src/
 
+# FORCE FULL LOGGING
 RUN dotnet publish src/PTA.API/PTA.API.csproj \
     -c Release \
     -o /app/publish \
-    /p:UseAppHost=false
+    /p:UseAppHost=false \
+    -bl:/tmp/publish.binlog || true
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "PTA.API.dll"]
-
+# PRINT LOG AS TEXT (CANNOT BE HIDDEN)
+RUN dotnet tool install -g dotnet-msbuildlog && \
+    export PATH="$PATH:/root/.dotnet/tools" && \
+    dotnet msbuildlog /tmp/publish.binlog || true
