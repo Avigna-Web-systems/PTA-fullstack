@@ -9,18 +9,18 @@ RUN dotnet restore src/PTA.API/PTA.API.csproj
 
 COPY src/ src/
 
-# FORCE FULL LOGGING
+# 🔴 THIS MUST SUCCEED OR DOCKER STOPS
 RUN dotnet publish src/PTA.API/PTA.API.csproj \
     -c Release \
     -o /app/publish \
     /p:UseAppHost=false \
-    -bl:/tmp/publish.binlog || true
+    -v minimal
 
-# ---------- RUNTIME STAGE ----------
+# 🔴 PROOF
+RUN echo "===== PUBLISH FOLDER CONTENT =====" && ls -R /app
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-
 COPY --from=build /app/publish .
-
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "PTA.API.dll"]
