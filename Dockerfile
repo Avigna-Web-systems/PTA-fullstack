@@ -1,29 +1,16 @@
-# ---------- BUILD STAGE ----------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
 WORKDIR /src
 
-# Copy csproj files
-COPY src/PTA.API/PTA.API.csproj src/PTA.API/
-COPY src/PTA.Core/PTA.Core.csproj src/PTA.Core/
-COPY src/PTA.Infrastructure/PTA.Infrastructure.csproj src/PTA.Infrastructure/
+# Copy everything
+COPY . .
 
-# Restore dependencies
-RUN dotnet restore src/PTA.API/PTA.API.csproj
+# Print structure (VERY IMPORTANT)
+RUN echo "===== DIRECTORY STRUCTURE =====" && ls -R . 
 
-# Copy full source
-COPY src/ src/
+# Restore
+RUN dotnet restore PTA.sln
 
-# Publish
-RUN dotnet publish src/PTA.API/PTA.API.csproj \
-    -c Release \
-    -o /app/publish \
-    /p:UseAppHost=false
+# Build with full error output
+RUN dotnet build src/PTA.API/PTA.API.csproj -c Release -v normal
 
-# ---------- RUNTIME STAGE ----------
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-
-COPY --from=build /app/publish .
-
-EXPOSE 8080
-ENTRYPOINT ["dotnet", "PTA.API.dll"]
