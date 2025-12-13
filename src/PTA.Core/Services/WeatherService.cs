@@ -25,11 +25,11 @@ public class WeatherService : IWeatherService
     };
 
     public IEnumerable<WeatherForecast> GetForecast() =>
-        Enumerable.Range(1, 5)
-            .Select(i => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(i),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            });
+        Enumerable.Range(1, 5).Select(i => new WeatherForecast
+        {
+            Date = DateTime.Now.AddDays(i),
+            TemperatureC = Random.Shared.Next(-20, 55),
+            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+        });
 }
+
