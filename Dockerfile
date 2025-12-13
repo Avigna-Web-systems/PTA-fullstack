@@ -16,7 +16,11 @@ RUN dotnet publish src/PTA.API/PTA.API.csproj \
     /p:UseAppHost=false \
     -bl:/tmp/publish.binlog || true
 
-# PRINT LOG AS TEXT (CANNOT BE HIDDEN)
-RUN dotnet tool install -g dotnet-msbuildlog && \
-    export PATH="$PATH:/root/.dotnet/tools" && \
-    dotnet msbuildlog /tmp/publish.binlog || true
+# ---------- RUNTIME STAGE ----------
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "PTA.API.dll"]
