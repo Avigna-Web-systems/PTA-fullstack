@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace PTA.Core.Services;
 public class WeatherForecast { public DateTime Date {get;set;} public int TemperatureC {get;set;} public string? Summary {get;set;} }
 public interface IWeatherService { IEnumerable<WeatherForecast> GetForecast(); }
