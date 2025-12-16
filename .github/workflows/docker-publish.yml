@@ -1,9 +1,12 @@
-name: Build and Push Docker Images
+name: Build and Push Docker Images      #final
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
-
+permissions:
+  contents: read
+  packages: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,7 +22,8 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
 
       # Backend – use root context
       - name: Build & push backend
@@ -29,8 +33,9 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:latest
-            ghcr.io/${{ steps.owner.outputs.name }}/pta-backend:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-fullstack-backend:latest
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-fullstack-backend:${{ github.sha }}
+
 
       # Frontend – use its own folder + own Dockerfile
       - name: Build & push frontend
@@ -40,5 +45,5 @@ jobs:
           file: ./src/PTA.UI/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:latest
-            ghcr.io/${{ steps.owner.outputs.name }}/pta-frontend:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-fullstack-frontend:latest
+            ghcr.io/${{ steps.owner.outputs.name }}/pta-fullstack-frontend:${{ github.sha }}
