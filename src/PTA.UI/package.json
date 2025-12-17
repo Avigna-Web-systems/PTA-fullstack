@@ -1,1 +1,1 @@
-{ "name":"pta-ui","version":"1.0.0","private":true,"scripts":{"build":"mkdir -p dist && echo '<h1>PTA UI</h1>' > dist/index.html"} }
+{ "name":"pta-ui","version":"1.0.0","private":true,"scripts":{"build":"mkdir -p dist && echo '<h1>PTA UI Enhancements</h1>' > dist/index.html"} }
